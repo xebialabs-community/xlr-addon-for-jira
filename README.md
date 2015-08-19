@@ -84,5 +84,38 @@ Any errors encountered are logged as comments on the issue.
 Unfortunately, Jira does not have a password custom field type. This plugin introduces such a type that hides the password on input and display.
 
 
+## Screenshots samples ##
 
+The following screenshots are samples from a potential integration scenario.
+
+## Workflow ##
+
+Sample workflow that introduces a _Release_ status. A user will transition to this state from the _Done_ status.
+
+![Sample Workflow](./doc-images/sample_workflow.png)
+
+## Post Function Selection ##
+
+![Sample PostFunction Selection](./doc-images/sample_postfunction_select.png)
+
+## Post Function Configuration ##
+
+![Sample PostFunction Conf](./doc-images/sample_config.png)
+
+## Release screen ##
+
+Sample custom release screen that is associated with the workflow transition.
+
+![Sample Release Screen](./doc-images/sample_release_screen.png)
+
+
+## Error comments ##
+
+Sample error messages logged by the post function to the issue's comments.
+
+![Sample Errors](./doc-images/sample_error_msgs.png)
+
+## Successful start of release comment ##
+
+![Sample Start](./doc-images/sample_success_start.png)
 
