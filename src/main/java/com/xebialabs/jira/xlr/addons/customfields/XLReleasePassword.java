@@ -9,10 +9,7 @@ import com.atlassian.jira.issue.fields.TextFieldCharacterLengthValidator;
 public class XLReleasePassword extends GenericTextCFType {
 
     public XLReleasePassword(CustomFieldValuePersister customFieldValuePersister, GenericConfigManager genericConfigManager) {
-        super(customFieldValuePersister,
-                genericConfigManager,
-                ComponentAccessor.getComponent(TextFieldCharacterLengthValidator.class),
-                ComponentAccessor.getJiraAuthenticationContext());
+        super(customFieldValuePersister, genericConfigManager);
     }
 
 }
