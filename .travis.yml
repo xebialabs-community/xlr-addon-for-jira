@@ -13,4 +13,6 @@ deploy:
     secure: tK5bdELloxAkF4XSMyaK72zBYbVKbOfZDWz8y+vR6c5I9doyDtS/5qTIdd1uv6YRmZhAx7tXemmthXRLtCDhOl+S9owJdawo21LOC7H6PLQzu/g2N/gMLtmMKpFhTCsvCf8m2GWiT2af9nawY0n14BlRY5KCs8JKilvBvywEpFfjtGyrXN4oIX1F02Se4eEnZW/s8IG43tLIjeG7ry/dC1XkcuesT/0dyAvQXkGX7F1S05Q8l/Qmz88+0jbaXPS7zLg46ch1sdIaliu9mSFX8m+5oDclFH+7JDLDCMLKIbcY7jMIOujcV/i6yi5laIMPaUA7SM8ZwAmYe/MaUJqFzLWO0+3fBzNciJ619kgrtyu5G1rVlgaOg1DTcWcYD5dLBzkf5P8rbaWCYFzUd7+1oHpmxp4KtDJkSiosUbW7pjJCzKQTghPa7nnxAyqF5c7ZLx0t4xB9HP/6axvC80sZkdAqFkP3D01jo4+9t+MUS42wHTBOJgBc/Id9t4WThlCKQjX3+SHfF6J5DlEUn3X1QK/HE7G6T9UWKtWZmD3EgZRsXbMgN5qa2QWhj54s/7+zIfwu6bOmkfREdV8NotGSTkSmoBbdV0GJdrvxlDDLE34NqRkqFLdr7Ynjm8omP5vRv0KfUOf6MFgzP7gZK1pXlcdp4AQnjk/eZPp4EDr68kk=
   file: target/xlr-addon-for-jira-1.0.0-rc1.jar
   on:
+    all_branches: true
+    tags: true
     repo: xebialabs-community/xlr-addon-for-jira
