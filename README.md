@@ -1,4 +1,7 @@
 # XL Release addon for Jira
+
+[![Build Status](https://travis-ci.org/xebialabs-community/xlr-addon-for-jira.svg?branch=master)](https://travis-ci.org/xebialabs-community/xlr-addon-for-jira)
+
 ## Preface ##
 
 This document describes the functionality provided by the XL Release addon for Jira.

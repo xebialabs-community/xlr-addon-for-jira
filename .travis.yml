@@ -1,0 +1,7 @@
+language: java
+sudo: false
+install: "mvn install:install-file -DgroupId=jta -DartifactId=jta -Dversion=1.0.1 -Dpackaging=jar -Dfile=third-party-libs/jta-1_0_1B-classes.jar && mvn install:install-file -DgroupId=jndi -DartifactId=jndi -Dversion=1.2.1 -Dpackaging=jar -Dfile=third-party-libs/jndi-1.2.1.jar"
+script: mvn clean package
+cache:
+  directories:
+    - $HOME/.m2
