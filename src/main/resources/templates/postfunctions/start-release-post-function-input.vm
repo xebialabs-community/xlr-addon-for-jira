@@ -1,0 +1,86 @@
+<tr>
+    <td class="fieldLabelArea">Template field name</td>
+    <td nowrap>
+        <input name="xlrTemplateField" id="xlrTemplateField" value="$xlrTemplateField" />
+        <br>
+        <font size="1">Required. The custom field name that is defined on an issue containing the XL Release template to start the release from. The issue must define and set this custom field.</font>
+    </td>
+</tr>
+
+<tr>
+    <td class="fieldLabelArea">Release id field name</td>
+    <td nowrap>
+        <input name="xlrReleaseIdField" id="xlrReleaseIdField" value="$xlrReleaseIdField" />
+        <br>
+        <font size="1">Required. The custom field name that is defined on an issue that will register the release id after this function starts it. The issue must define this custom field.</font>
+    </td>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+<tr>
+    <td class="fieldLabelArea">Url</td>
+    <td nowrap>
+        <input name="xlrUrlGlobal" id="xlrUrlGlobal" value="$xlrUrlGlobal" />
+        <br>
+        <font size="1">Optional. Url of the XL Release Server. Will be used when no url is specified on an issue. Can be blank.</font>
+    </td>
+</tr>
+
+<tr>
+    <td class="fieldLabelArea">Username</td>
+    <td nowrap>
+        <input name="xlrUsernameGlobal" id="xlrUsernameGlobal" value="$xlrUsernameGlobal" />
+        <br>
+        <font size="1">Optional. Username to use for authentication to the XL Release Server. Will be used when no username is specified on an issue. Can be blank.</font>
+    </td>
+</tr>
+
+<tr>
+    <td class="fieldLabelArea">Password</td>
+    <td nowrap>
+        <input type="password" name="xlrPasswordGlobal" id="xlrPasswordGlobal" value="$xlrPasswordGlobal" />
+        <br>
+        <font size="1">Optional. Password to use for authentication to the XL Release Server. Will be used when no password is specified on an issue. Can be blank.</font>
+    </td>
+</tr>
+
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+    <td class="fieldLabelArea">Release description field name</td>
+    <td nowrap>
+        <input name="xlrReleaseDescriptionField" id="xlrReleaseDescriptionField" value="$xlrReleaseDescriptionField" />
+        <br>
+        <font size="1">Optional. The custom field name that is defined on an issue containing the description for the release.</font>
+    </td>
+</tr>
+
+<tr>
+    <td class="fieldLabelArea">Url field name</td>
+    <td nowrap>
+        <input name="xlrUrlField" id="xlrUrlField" value="$xlrUrlField" />
+        <br>
+        <font size="1">Optional. The custom field name that is defined on an issue containing the XL Release Server url. If this custom field is defined and set on an issue, it will override the default setting.</font>
+    </td>
+</tr>
+
+<tr>
+    <td class="fieldLabelArea">Username field name</td>
+    <td nowrap>
+        <input name="xlrUserNameField" id="xlrUserNameField" value="$xlrUserNameField" />
+        <br>
+        <font size="1">Optional. The custom field name that is defined on an issue containing the XL Release username. If this custom field is defined and set on an issue, it will override the default setting.</font>
+    </td>
+</tr>
+
+<tr>
+    <td class="fieldLabelArea">Password field name</td>
+    <td nowrap>
+        <input name="xlrPasswordField" id="xlrPasswordField" value="$xlrPasswordField" />
+        <br>
+        <font size="1">Optional. The custom field name that is defined on an issue containing the XL Release Server password. If this custom field is defined and set on an issue, it will override the default setting.</font>
+    </td>
+</tr>
+
+

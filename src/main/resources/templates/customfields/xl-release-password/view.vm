@@ -1,0 +1,1 @@
+<input type="password" name="$customField.id" value="$value" style="border:0px;" readonly="readyonly"/>

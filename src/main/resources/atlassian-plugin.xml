@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/xlrIcon.png</param>
+    <param name="plugin-logo">images/xlrLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="xlr-addon-for-jira"/>
+  <!-- add our web resources -->
+  <web-resource key="xlr-addon-for-jira-resources" name="xlr-addon-for-jira Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <!--<resource type="download" name="xlr-addon-for-jira.css" location="/css/xlr-addon-for-jira.css"/>-->
+    <!--<resource type="download" name="xlr-addon-for-jira.js" location="/js/xlr-addon-for-jira.js"/>-->
+    <resource type="download" name="images/" location="/images"/>
+    <context>xlr-addon-for-jira</context>
+  </web-resource>
+  <!-- import from the product container -->
+  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+  <customfield-type name="XL Release Password" i18n-name-key="xl-release-password.name" key="xl-release-password" class="com.xebialabs.jira.xlr.addons.customfields.XLReleasePassword">
+    <description key="xl-release-password.description">XL Release Password Field</description>
+    <resource name="view" type="velocity" location="templates/customfields/xl-release-password/view.vm"/>
+    <resource name="edit" type="velocity" location="templates/customfields/xl-release-password/edit.vm"/>
+  </customfield-type>
+  <workflow-function key="start-release-post-function" name="Start Release from Template" i18n-name-key="start-release-post-function.name" class="com.xebialabs.jira.xlr.addons.workflow.StartReleasePostFunctionFactory">
+    <description key="start-release-post-function.description">Start release in XL Release using template specified on issue</description>
+    <function-class>com.xebialabs.jira.xlr.addons.workflow.StartReleasePostFunction</function-class>
+    <orderable>true</orderable>
+    <unique>true</unique>
+    <deletable>true</deletable>
+    <resource type="velocity" name="view" location="templates/postfunctions/start-release-post-function.vm"/>
+    <resource type="velocity" name="input-parameters" location="templates/postfunctions/start-release-post-function-input.vm"/>
+    <resource type="velocity" name="edit-parameters" location="templates/postfunctions/start-release-post-function-input.vm"/>
+  </workflow-function>
+</atlassian-plugin>
