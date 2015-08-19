@@ -6,14 +6,14 @@
 
 This document describes the functionality provided by the XL Release addon for Jira.
 
-As a pre-requisite, the reader should have a good understanding of administering Jira Work Flows, Screens and Custom Fields. For more information, please refer to :
+As a prerequisite, the reader should have a good understanding of administering Jira Work Flows, Screens and Custom Fields. For more information, please refer to :
 
 * [Jira Administration Guide](https://confluence.atlassian.com/display/JIRA/JIRA+Administrator's+Guide)
 * Jira Administration Tutorial Videos
 	* [Jira Workflows](https://www.youtube.com/watch?v=XCXec_F0Z_8)
 	* [Setting up Fields and Screens](https://www.youtube.com/watch?v=SOIjfMxS6HE)
 
-If you wish to extend the plugin, the following links will are useful :
+If you wish to extend the plugin, the following links maybe useful :
 
 * [Atlassian's Getting Started](https://developer.atlassian.com/docs/getting-started) 
 * [Set up the Atlassian Plugin SDK and Build a Project](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project)
