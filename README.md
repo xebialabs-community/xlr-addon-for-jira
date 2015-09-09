@@ -13,10 +13,12 @@ As a prerequisite, the reader should have a good understanding of administering 
 	* [Jira Workflows](https://www.youtube.com/watch?v=XCXec_F0Z_8)
 	* [Setting up Fields and Screens](https://www.youtube.com/watch?v=SOIjfMxS6HE)
 
-If you wish to extend the plugin, the following links maybe useful :
+If you wish to extend the plugin, the following will be useful :
 
 * [Atlassian's Getting Started](https://developer.atlassian.com/docs/getting-started) 
 * [Set up the Atlassian Plugin SDK and Build a Project](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project)
+* The sdk requires an Oracle ojdbc driver in the local maven repository. After downloading the [ojdbc6.jar](http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html) file, you can run the following maven command to install it `atlas-mvn install:install-file -Dfile=path/to/ojdbc6-11.2.0.2.0.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.2.0 -Dpackaging=jar`
+* To run the plugin in a development Jira instance, execute `atlas-run` from the checked out projects root directory.
 
 ## Overview ##
 
@@ -36,7 +38,7 @@ The XL Release addon for Jira is a Jira plugin with a primary focus of starting 
 ## Requirements ##
 
 * **XL Release** 4.6+
-* **Jira** 6.4.7+ _Should work on ealier versions, but has not been tested_.
+* **Jira** 6.3.x, 6.4.x
 		
 
 ## Installation ##
