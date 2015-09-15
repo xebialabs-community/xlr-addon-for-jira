@@ -26,7 +26,7 @@ public class FieldConstants {
     public static final String XLR_RELEASE_ID_FIELD = "xlrReleaseIdField";
     public static final String XLR_RELEASE_ID_FIELD_DEFAULT = "XLR Release Id";
 
-    public static final String XLR_RELEASE_DESC_FIELD = "xlrReleaseDescriptionField";
-    public static final String XLR_RELEASE_DESC_FIELD_DEFAULT = "XLR Release Description";
+    public static final String XLR_RELEASE_TITLE_FIELD = "xlrReleaseTitleField";
+    public static final String XLR_RELEASE_TITLE_FIELD_DEFAULT = "XLR Release Title";
 
 }

@@ -13,8 +13,8 @@ import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_FIELD_DEFAULT;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_GLOBAL;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_GLOBAL_DEFAULT;
-import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_DESC_FIELD;
-import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_DESC_FIELD_DEFAULT;
+import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_TITLE_FIELD;
+import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_TITLE_FIELD_DEFAULT;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_ID_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_ID_FIELD_DEFAULT;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_TEMPLATE_FIELD;
@@ -53,7 +53,7 @@ public class StartReleasePostFunctionFactory extends AbstractWorkflowPluginFacto
         velocityParams.put(XLR_PASSWORD_FIELD, XLR_PASSWORD_FIELD_DEFAULT);
         velocityParams.put(XLR_RELEASE_ID_FIELD, XLR_RELEASE_ID_FIELD_DEFAULT);
         velocityParams.put(XLR_TEMPLATE_FIELD, XLR_TEMPLATE_FIELD_DEFAULT);
-        velocityParams.put(XLR_RELEASE_DESC_FIELD, XLR_RELEASE_DESC_FIELD_DEFAULT);
+        velocityParams.put(XLR_RELEASE_TITLE_FIELD, XLR_RELEASE_TITLE_FIELD_DEFAULT);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class StartReleasePostFunctionFactory extends AbstractWorkflowPluginFacto
         extractParam(XLR_PASSWORD_FIELD, XLR_PASSWORD_FIELD_DEFAULT, source, target);
         extractParam(XLR_RELEASE_ID_FIELD, XLR_RELEASE_ID_FIELD_DEFAULT, source, target);
         extractParam(XLR_TEMPLATE_FIELD, XLR_TEMPLATE_FIELD_DEFAULT, source, target);
-        extractParam(XLR_RELEASE_DESC_FIELD, XLR_RELEASE_DESC_FIELD_DEFAULT, source, target);
+        extractParam(XLR_RELEASE_TITLE_FIELD, XLR_RELEASE_TITLE_FIELD_DEFAULT, source, target);
     }
 
     private void extractParam(String name, String defaultValue, Map<String, Object> source, Map<String, Object> target) {
