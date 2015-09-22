@@ -59,7 +59,7 @@ Other optional input custom fields are,
 * A field to indicate the XL Release Server url
 * A field to indicate the username to use for authentication in XL Release Server
 * A field to indicate the password to use for authentication in XL Release Server
-* A field to indicate the release description to use
+* A field to indicate the release title to use
 
 Any other custom field on an issue is used as input to XL Release template variables. The association is made based on the field name. The issue number is mapped to an XL Release template variable called _issue_ if present.
 
@@ -77,7 +77,7 @@ Any errors encountered are logged as comments on the issue.
 | Url | Url of the XL Release Server. Will be used when no url is specified on an issue. Can be blank. | No | http://localhost:5516 |
 | Username | Username to use for authentication to the XL Release Server. Will be used when no username is specified on an issue. Can be blank. | No | admin |
 | Password | Password to use for authentication to the XL Release Server. Will be used when no password is specified on an issue. Can be blank. | No | admin |
-| Release description field name | The custom field name that is defined on an issue containing the description for the release. Does not have to be defined on issue, will be automatically generated for issue number. | No | XLR Release Description |
+| Release title field name | The custom field name that is defined on an issue containing the title for the release. Does not have to be defined on issue, will be automatically generated for issue number. | No | XLR Release Title |
 | Url field name | The custom field name that is defined on an issue containing the XL Release Server url. If this custom field is defined and set on an issue, it will override the default setting. | No | XLR Url |
 | Password field name | The custom field name that is defined on an issue containing the XL Release username. If this custom field is defined and set on an issue, it will override the default setting.| No | XLR Password |
 
