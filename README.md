@@ -49,7 +49,9 @@ Please follow the instructions detailed in the _"Installing by file upload"_ sec
 
 ## _Start release from template_ Post Function ##
 
-The post function can be used in a work flow transition. The function uses predefined custom fields on an issue for input and output. At bare minimum, 2 custom fields are required,
+The post function can be used in a work flow transition provided it happens after the Issue has actually been created (i.e if adding to the **Create** flow transition ensure it is the final step). 
+
+The function uses predefined custom fields on an issue for input and output. At bare minimum, 2 custom fields are required,
 
 * A field to indicate the release template to start in XL Release 
 * A field to capture the XL Release id after a successful start
