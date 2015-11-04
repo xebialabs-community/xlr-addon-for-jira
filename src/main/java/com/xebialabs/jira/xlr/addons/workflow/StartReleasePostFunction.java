@@ -2,9 +2,8 @@ package com.xebialabs.jira.xlr.addons.workflow;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
@@ -72,6 +71,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
     private void doExecute(Map args, MutableIssue issue) throws XLReleaseClientException {
         IssueFieldMapper argsMapper = new IssueFieldMapper(args, issue);
         XLReleaseClient xlReleaseClient = initClient(argsMapper);
+        String serverVersion = xlReleaseClient.getServerVersion();
 
         String releaseId = argsMapper.getReleaseId();
         if (releaseId != null) {
@@ -81,18 +81,18 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
         String xlrTemplate = argsMapper.getReleaseTemplateName();
         Release releaseTemplate = xlReleaseClient.findTemplateByTitle(xlrTemplate);
-        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId());
-        argsMapper.populateVariables(variables);
+        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
+        argsMapper.populateVariables(variables, serverVersion);
 
         String title = argsMapper.getOptionalCustomFieldValue(XLR_RELEASE_TITLE_FIELD);
         if (Strings.isNullOrEmpty(title)) {
             title = "Release Jira Issue " + issue.getKey();
         }
 
-        Release release = xlReleaseClient.createRelease(releaseTemplate.getPublicId(), title, variables);
-        issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPublicId());
-        writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPublicId()));
-        xlReleaseClient.startRelease(release.getPublicId());
+        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables);
+        issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPrivateId());
+        writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPrivateId()));
+        xlReleaseClient.startRelease(release.getPrivateId());
 
     }
 
@@ -137,9 +137,17 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
             return resolveValueFromCustomIssueFieldOrGlobalSetting(XLR_USER_NAME_FIELD, XLR_USERNAME_GLOBAL, "Username");
         }
 
-        public void populateVariables(List<TemplateVariable> variables) {
+        public void populateVariables(List<TemplateVariable> variables, String serverVersion) {
+
             for (TemplateVariable variable : variables) {
-                String key = variable.getKey().substring(2, variable.getKey().length() - 1);
+                String key;
+
+                if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
+                    key = variable.getKey().substring(2, variable.getKey().length() - 1);
+                } else {
+                    key = variable.getKey();
+                }
+
                 if (key.equals("issue")) {
                     variable.setValue(issue.getKey());
                 } else if (issueCustomFields.containsKey(key)) {
