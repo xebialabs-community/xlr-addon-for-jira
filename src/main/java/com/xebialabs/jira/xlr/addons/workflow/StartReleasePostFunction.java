@@ -89,10 +89,10 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
             title = "Release Jira Issue " + issue.getKey();
         }
 
-        Release release = xlReleaseClient.createRelease(releaseTemplate.getPublicId(), title, variables);
-        issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPublicId());
-        writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPublicId()));
-        xlReleaseClient.startRelease(release.getPublicId());
+        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables);
+        issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPrivateId());
+        writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPrivateId()));
+        xlReleaseClient.startRelease(release.getPrivateId());
 
     }
 
@@ -139,7 +139,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
         public void populateVariables(List<TemplateVariable> variables) {
             for (TemplateVariable variable : variables) {
-                String key = variable.getKey().substring(2, variable.getKey().length() - 1);
+                String key = variable.getKey();
                 if (key.equals("issue")) {
                     variable.setValue(issue.getKey());
                 } else if (issueCustomFields.containsKey(key)) {

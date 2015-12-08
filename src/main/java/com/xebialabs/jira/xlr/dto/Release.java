@@ -56,6 +56,10 @@ public class Release {
     }
 
     public String getPublicId() {
+        return (id != null) ? id : null;
+    }
+
+    public String getPrivateId() {
         return (id != null) ? id.replace("Applications/", "") : null;
     }
 

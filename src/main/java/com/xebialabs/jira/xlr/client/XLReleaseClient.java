@@ -36,7 +36,7 @@ public class XLReleaseClient {
     }
 
     public List<TemplateVariable> getVariables(String templateId) {
-        WebResource service = newWebResource().path("releases").path(templateId).path("updatable-variables");
+        WebResource service = newWebResource().path("api").path("v1").path("releases").path(templateId).path("variables");
         GenericType<List<TemplateVariable>> genericType = new GenericType<List<TemplateVariable>>() {};
         return service.accept(MediaType.APPLICATION_JSON).get(genericType);
     }
