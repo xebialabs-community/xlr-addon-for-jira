@@ -1,10 +1,19 @@
 package com.xebialabs.jira.xlr.client;
 
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 import javax.ws.rs.core.MediaType;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.ws.Response;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -19,6 +28,9 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.xebialabs.jira.xlr.dto.CreateReleaseView;
 import com.xebialabs.jira.xlr.dto.Release;
 import com.xebialabs.jira.xlr.dto.TemplateVariable;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
@@ -29,14 +41,69 @@ public class XLReleaseClient {
     private String password;
     private String serverUrl;
 
+    public String getServerVersion() {
+        return serverVersion;
+    }
+
+    private String serverVersion;
+
     public XLReleaseClient(String serverUrl, String username, String password) {
         this.user=username;
         this.password=password;
         this.serverUrl=serverUrl;
+        this.serverVersion=determineServerVersion();
+    }
+
+    public String determineServerVersion() {
+
+        String defaultVersion = "4.6";
+        String foundVersion;
+        WebResource service = newWebResource().path("server").path("info");
+
+        ClientResponse response = service.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+        if (response.getClientResponseStatus().getFamily() != SUCCESSFUL) {
+            String errorReason = response.getEntity(String.class);
+            return defaultVersion;
+        }
+
+        String xml = response.getEntity(String.class);
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder builder = null;
+        Document xmlDocument = null;
+        try {
+            builder = builderFactory.newDocumentBuilder();
+            xmlDocument = builder.parse(new InputSource(new StringReader(xml)));
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        try {
+            return xPath.compile("//version/text()").evaluate(xmlDocument);
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+            return defaultVersion;
+        }
+
+
     }
 
     public List<TemplateVariable> getVariables(String templateId) {
-        WebResource service = newWebResource().path("api").path("v1").path("releases").path(templateId).path("variables");
+
+        // Maintaining compatibility with previous versions of XLRelease
+        Set<String> backVersions = new HashSet<String>(Arrays.asList("4.6", "4.7"));
+        WebResource service = null;
+        if (backVersions.contains(this.serverVersion.substring(0,3))) {
+            service = newWebResource().path("releases").path(templateId).path("updatable-variables");
+        } else {
+            service = newWebResource().path("api").path("v1").path("releases").path(templateId).path("variables");
+        }
+
         GenericType<List<TemplateVariable>> genericType = new GenericType<List<TemplateVariable>>() {};
         return service.accept(MediaType.APPLICATION_JSON).get(genericType);
     }

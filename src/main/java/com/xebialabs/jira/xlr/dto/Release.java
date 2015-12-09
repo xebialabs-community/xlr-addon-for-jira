@@ -1,8 +1,13 @@
 package com.xebialabs.jira.xlr.dto;
 
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.sun.jersey.api.client.WebResource;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -55,12 +60,21 @@ public class Release {
         this.status = status;
     }
 
-    public String getPublicId() {
-        return (id != null) ? id : null;
+    public String getPrivateId(){
+        return (id != null) ? id.replace("Applications/", "") : null;
     }
 
-    public String getPrivateId() {
-        return (id != null) ? id.replace("Applications/", "") : null;
+    public String getPublicId(String serverVersion) {
+
+        Set<String> backVersions = new HashSet<String>(Arrays.asList("4.6", "4.7"));
+
+        if (backVersions.contains(serverVersion.substring(0,3))) {
+            return (id != null) ? id.replace("Applications/", "") : null;
+        } else {
+            return (id != null) ? id : null;
+        }
+
+
     }
 
     @Override
