@@ -66,9 +66,7 @@ public class Release {
 
     public String getPublicId(String serverVersion) {
 
-        Set<String> backVersions = new HashSet<String>(Arrays.asList("4.6", "4.7"));
-
-        if (backVersions.contains(serverVersion.substring(0,3))) {
+        if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
             return (id != null) ? id.replace("Applications/", "") : null;
         } else {
             return (id != null) ? id : null;

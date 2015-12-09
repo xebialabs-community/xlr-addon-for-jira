@@ -96,9 +96,8 @@ public class XLReleaseClient {
     public List<TemplateVariable> getVariables(String templateId) {
 
         // Maintaining compatibility with previous versions of XLRelease
-        Set<String> backVersions = new HashSet<String>(Arrays.asList("4.6", "4.7"));
         WebResource service = null;
-        if (backVersions.contains(this.serverVersion.substring(0,3))) {
+        if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
             service = newWebResource().path("releases").path(templateId).path("updatable-variables");
         } else {
             service = newWebResource().path("api").path("v1").path("releases").path(templateId).path("variables");

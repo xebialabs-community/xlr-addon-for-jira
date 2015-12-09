@@ -138,12 +138,11 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         }
 
         public void populateVariables(List<TemplateVariable> variables, String serverVersion) {
-            Set<String> backVersions = new HashSet<String>(Arrays.asList("4.6", "4.7"));
 
             for (TemplateVariable variable : variables) {
                 String key;
 
-                if (backVersions.contains(serverVersion.substring(0,3))) {
+                if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
                     key = variable.getKey().substring(2, variable.getKey().length() - 1);
                 } else {
                     key = variable.getKey();
