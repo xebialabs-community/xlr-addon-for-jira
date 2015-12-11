@@ -69,9 +69,8 @@ public class Release {
         if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
             return (id != null) ? id.replace("Applications/", "") : null;
         } else {
-            return (id != null) ? id : null;
+            return id;
         }
-
 
     }
 
