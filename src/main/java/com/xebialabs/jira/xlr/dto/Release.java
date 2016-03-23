@@ -1,13 +1,8 @@
 package com.xebialabs.jira.xlr.dto;
 
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.sun.jersey.api.client.WebResource;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
