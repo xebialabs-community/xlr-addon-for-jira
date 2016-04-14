@@ -26,6 +26,7 @@ import com.xebialabs.jira.xlr.client.XLReleaseClient;
 import com.xebialabs.jira.xlr.client.XLReleaseClientException;
 import com.xebialabs.jira.xlr.dto.Release;
 import com.xebialabs.jira.xlr.dto.TemplateVariable;
+import com.xebialabs.jira.xlr.dto.TemplateVariableV2;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_FIELD;
@@ -87,13 +88,30 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
         String xlrTemplate = argsMapper.getReleaseTemplateName();
         
+        
         if ("".equals(xlrTemplate) || xlrTemplate == null)
         {
-        	return;
+            /*
+            ** Code simply returns If it is unable to find a matching template name defined in XLRelease.
+            ** This is done to byepass the mandatory check for Template name
+            ** If a template name is not passed in Jira, Then XLRelease will not write back an error as 
+            ** comment to the Jira issue
+            */
+            return;
+        }
+
+        Release releaseTemplate = xlReleaseClient.findTemplateByTitle(xlrTemplate);
+
+        List variables;
+		
+		if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
+            variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
+        } else {
+            variables =  xlReleaseClient.getVariablesV2(releaseTemplate.getPublicId(serverVersion));
         }
         
-        Release releaseTemplate = xlReleaseClient.findTemplateByTitle(xlrTemplate);
-        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
+        
+      
         argsMapper.populateVariables(variables, serverVersion);
 
         String title = argsMapper.getOptionalCustomFieldValue(XLR_RELEASE_TITLE_FIELD);
