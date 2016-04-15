@@ -89,7 +89,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         String xlrTemplate = argsMapper.getReleaseTemplateName();
         
         
-        if ("".equals(xlrTemplate) || xlrTemplate == null)
+        if (xlrTemplate == null || "".equals(xlrTemplate) )
         {
             /*
             ** Code simply returns If it is unable to find a matching template name defined in XLRelease.
@@ -144,7 +144,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         }
 
         public String getReleaseTemplateName() {
-        	if ( "".equals(getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD)) ||   getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD) == null)
+        	if ( getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD) == null || "".equals(getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD)) )
         	{
         		return "";
         	}
