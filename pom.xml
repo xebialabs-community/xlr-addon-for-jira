@@ -2,14 +2,14 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.xebialabs.jira.addons</groupId>
+    <groupId>org.venkatk.jira.addons</groupId>
     <artifactId>xlr-addon-for-jira</artifactId>
     <version>1.0.1</version>
     <organization>
-        <name>XebiaLabs</name>
-        <url>http://www.xebialabs.com/</url>
+        <name>Venkat Karthik</name>
+        <url></url>
     </organization>
-    <name>xlr-addon-for-jira</name>
+    <name>Jira-XL Release add on</name>
     <description>This is an XL Release plugin for Atlassian JIRA.</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>
