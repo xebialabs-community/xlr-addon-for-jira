@@ -13,10 +13,6 @@ public class TemplateVariable {
     private String key;
     private String value;
 
-    private Boolean requiresValue;
-    private Boolean showOnReleaseStart;
-
-
     public TemplateVariable() {
     }
 
@@ -41,21 +37,6 @@ public class TemplateVariable {
         this.value = value;
     }
 
-    public Boolean getRequiresValue() {
-        return requiresValue;
-    }
-
-    public void setRequiresValue(final Boolean requiresValue) {
-        this.requiresValue = requiresValue;
-    }
-
-    public Boolean getShowOnReleaseStart() {
-        return showOnReleaseStart;
-    }
-
-    public void setShowOnReleaseStart(final Boolean showOnReleaseStart) {
-        this.showOnReleaseStart = showOnReleaseStart;
-    }
 
     public static Map<String, String> toMap(Collection<? extends TemplateVariable> variables) {
         Map<String, String> result = new HashMap<String, String>();

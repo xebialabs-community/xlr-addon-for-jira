@@ -3,7 +3,7 @@ package com.xebialabs.jira.xlr.addons.workflow;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-
+import java.sql.Timestamp;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
@@ -12,6 +12,11 @@ import com.atlassian.jira.issue.comments.CommentManager;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
+import com.atlassian.jira.project.version.Version;
+import org.apache.commons.lang.StringUtils;
+import com.atlassian.jira.user.DelegatingApplicationUser;
+import com.atlassian.jira.issue.customfields.option.LazyLoadedOption;
+
 import com.google.common.base.Strings;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.WorkflowException;
@@ -21,6 +26,8 @@ import com.xebialabs.jira.xlr.client.XLReleaseClient;
 import com.xebialabs.jira.xlr.client.XLReleaseClientException;
 import com.xebialabs.jira.xlr.dto.Release;
 import com.xebialabs.jira.xlr.dto.TemplateVariable;
+import com.xebialabs.jira.xlr.dto.TemplateVariableV2;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
 
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_GLOBAL;
@@ -80,8 +87,31 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         }
 
         String xlrTemplate = argsMapper.getReleaseTemplateName();
+        
+        
+        if (xlrTemplate == null || "".equals(xlrTemplate) )
+        {
+            /*
+            ** Code simply returns If it is unable to find a matching template name defined in XLRelease.
+            ** This is done to byepass the mandatory check for Template name
+            ** If a template name is not passed in Jira, Then XLRelease will not write back an error as 
+            ** comment to the Jira issue
+            */
+            return;
+        }
+
         Release releaseTemplate = xlReleaseClient.findTemplateByTitle(xlrTemplate);
-        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
+
+        List variables;
+		
+		if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
+            variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
+        } else {
+            variables =  xlReleaseClient.getVariablesV2(releaseTemplate.getPublicId(serverVersion));
+        }
+        
+        
+      
         argsMapper.populateVariables(variables, serverVersion);
 
         String title = argsMapper.getOptionalCustomFieldValue(XLR_RELEASE_TITLE_FIELD);
@@ -114,6 +144,10 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         }
 
         public String getReleaseTemplateName() {
+        	if ( getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD) == null || "".equals(getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD)) )
+        	{
+        		return "";
+        	}
             return getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD);
         }
 
@@ -139,6 +173,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
         public void populateVariables(List<TemplateVariable> variables, String serverVersion) {
 
+        	try{
             for (TemplateVariable variable : variables) {
                 String key;
 
@@ -150,10 +185,87 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
                 if (key.equals("issue")) {
                     variable.setValue(issue.getKey());
-                } else if (issueCustomFields.containsKey(key)) {
-                    variable.setValue((String) issue.getCustomFieldValue(issueCustomFields.get(key)));
+                    }
+                    else if (key.equals("components"))
+                    {
+                      if (this.issue.getComponentObjects() != null)
+                      {
+                        StringBuffer componentsCSV = new StringBuffer();
+                        Collection<ProjectComponent> projectComponents = this.issue.getComponentObjects();
+                        java.util.Iterator<ProjectComponent> compIter = projectComponents.iterator();
+                        while (compIter.hasNext())
+                        {
+                          ProjectComponent pComp = (ProjectComponent)compIter.next();
+                          componentsCSV.append(pComp.getName()).append(",");
+                        }
+                        variable.setValue(componentsCSV.toString().substring(0, componentsCSV.length() - 1));
+                      }
+                    }
+                    else if (key.equals("duedate"))
+                    {
+                      if (this.issue.getDueDate() != null)
+                      {
+                        Timestamp dueDate = this.issue.getDueDate();
+                        variable.setValue(dueDate.toString());
+                      }
+                    }
+                    else if (key.equals("environment"))
+                    {
+                      if (this.issue.getEnvironment() != null) {
+                        variable.setValue(this.issue.getEnvironment());
+                      }
+                    }
+                    else if (key.equals("fixVersions"))
+                    {
+                      StringBuffer fixVersionCSV = new StringBuffer();
+                      
+                      Collection<Version> fixVersion = this.issue.getFixVersions();
+                      Iterator<Version> fixVerIter = fixVersion.iterator();
+                      while (fixVerIter.hasNext())
+                      {
+                        Version version = (Version)fixVerIter.next();
+                        fixVersionCSV.append(version.getName()).append(",");
+                      }
+                      variable.setValue(fixVersionCSV.toString().substring(0, fixVersionCSV.length() - 1));
+                    }
+                    else if (this.issueCustomFields.containsKey(key))
+                    {
+                      try{
+                    	  System.out.println("Key:" + key + " Value:" + this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)));
+                      }catch(Exception ex)
+                      {
+                    	 ex.printStackTrace(); 
+                      }
+                      if ((this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)) instanceof ArrayList))
+                      {
+                        List<String> slist = (ArrayList)this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key));
+                        variable.setValue(StringUtils.join(slist, ','));
+                      }
+                      else if ((this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)) instanceof String))
+                      {
+                        variable.setValue((String)this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)));
+                      }
+                      else if ((this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)) instanceof DelegatingApplicationUser))
+                      {
+                        DelegatingApplicationUser testManager = (DelegatingApplicationUser)this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key));
+                        variable.setValue(testManager.getEmailAddress());
+                      }
+                      else if ((this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)) instanceof LazyLoadedOption))
+                      {
+                        LazyLoadedOption changeCategory = (LazyLoadedOption)this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key));
+                        variable.setValue(changeCategory.getValue());
+                      }
+                      else if (this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)) != null)
+                      {
+                        System.out.println("Inside 3rd Else.." + this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)).getClass());
+                        variable.setValue(this.issue.getCustomFieldValue((CustomField)this.issueCustomFields.get(key)).toString());
+                      }
+                    }
                 }
-            }
+            	}catch(Exception ex)
+            	{
+            		ex.printStackTrace();
+            	}
         }
 
         private String resolveValueFromCustomIssueFieldOrGlobalSetting(String settingsField, String globalSettingsField, String settingName) {
@@ -169,9 +281,13 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
         private String getCustomRequiredFieldValue(String name) {
             String value = getCustomFieldValue(name);
-            if (Strings.isNullOrEmpty(value)) {
-                String issueFieldName = resolveIssueFieldNameFromSettingsFieldName(name);
-                throw new IllegalArgumentException(format("Custom field '%s', referenced from post function argument %s, has empty value on issue %s.", issueFieldName, name, issue.getId()));
+			
+            if (! name.equals(XLR_TEMPLATE_FIELD)) //Ignore mandatory value check for XLR Template field
+            {
+	            if (Strings.isNullOrEmpty(value)) {
+	                String issueFieldName = resolveIssueFieldNameFromSettingsFieldName(name);
+	                throw new IllegalArgumentException(format("Custom field '%s', referenced from post function argument %s, has empty value on issue %s.", issueFieldName, name, issue.getId()));
+	            }
             }
             return value;
         }

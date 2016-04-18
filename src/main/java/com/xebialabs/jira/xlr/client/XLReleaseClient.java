@@ -13,6 +13,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.xebialabs.jira.xlr.dto.TemplateVariableV2;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -92,19 +93,31 @@ public class XLReleaseClient {
 
     }
 
+
+
+    public List<TemplateVariableV2> getVariablesV2(String templateId) {
+
+        // Maintaining compatibility with previous versions of XLRelease
+        WebResource service = null;
+
+        service = newWebResource().path("api").path("v1").path("releases").path(templateId).path("variables");
+
+
+        GenericType<List<TemplateVariableV2>> genericType = new GenericType<List<TemplateVariableV2>>() {};
+        return service.accept(MediaType.APPLICATION_JSON).get(genericType);
+    }
+
     public List<TemplateVariable> getVariables(String templateId) {
 
         // Maintaining compatibility with previous versions of XLRelease
         WebResource service = null;
-        if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
-            service = newWebResource().path("releases").path(templateId).path("updatable-variables");
-        } else {
-            service = newWebResource().path("api").path("v1").path("releases").path(templateId).path("variables");
-        }
+
+        service = newWebResource().path("releases").path(templateId).path("updatable-variables");
 
         GenericType<List<TemplateVariable>> genericType = new GenericType<List<TemplateVariable>>() {};
         return service.accept(MediaType.APPLICATION_JSON).get(genericType);
     }
+
 
     public Release findTemplateByTitle(String templateTitle) throws TemplateNotFoundException {
         WebResource service = newWebResource().path("api").path("v1").path("releases").path("byTitle")
