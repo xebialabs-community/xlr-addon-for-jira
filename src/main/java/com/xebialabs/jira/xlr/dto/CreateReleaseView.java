@@ -11,16 +11,20 @@ public class CreateReleaseView {
     private String title;
     private String dueDate;
     private String scheduledStartDate;
+    private ScriptUsername scriptUsername;
+    private String scriptUserPassword;
 
     public CreateReleaseView() {
     }
 
-    public CreateReleaseView(final String templateId, final String title, final List<TemplateVariable> variables, final String dueDate, final String scheduledStartDate) {
+    public CreateReleaseView(final String templateId, final String title, final List<TemplateVariable> variables, final String dueDate, final String scheduledStartDate, final ScriptUsername scriptUsername, String scriptUserPassword) {
         this.variables = variables;
         this.templateId = templateId;
         this.title = title;
         this.dueDate = dueDate;
         this.scheduledStartDate = scheduledStartDate;
+        this.scriptUsername = scriptUsername;
+        this.scriptUserPassword = scriptUserPassword;
     }
 
     public List<TemplateVariable> getVariables() {
@@ -61,5 +65,18 @@ public class CreateReleaseView {
 
     public void setScheduledStartDate(String scheduledStartDate) {
         this.scheduledStartDate = scheduledStartDate;
+    }
+
+
+    public ScriptUsername getScriptUsername() {
+        return scriptUsername;
+    }
+
+    public void setScriptUsername(ScriptUsername scriptUsername) {
+        this.scriptUsername = scriptUsername;
+    }
+
+    public String getScriptUserPassword() {
+        return scriptUserPassword;
     }
 }

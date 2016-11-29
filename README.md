@@ -1,5 +1,20 @@
 # XL Release addon for Jira
 
+# CI status #
+
+[![Build Status][xlr-addon-for-jira-travis-image] ][xlr-addon-for-jira-travis-url]
+[![Build Status][xlr-addon-for-jira-codacy-image] ][xlr-addon-for-jira-codacy-url]
+[![Build Status][xlr-addon-for-jira-code-climate-image] ][xlr-addon-for-jira-code-climate-url]
+
+
+[xlr-addon-for-jira-travis-image]: https://travis-ci.org/xebialabs-community/xlr-addon-for-jira.svg?branch=master
+[xlr-addon-for-jira-travis-url]: https://travis-ci.org/xebialabs-community/xlr-addon-for-jira
+[xlr-addon-for-jira-codacy-image]: https://api.codacy.com/project/badge/Grade/e70f9189f78e472aa7546104357a64f1
+[xlr-addon-for-jira-codacy-url]: https://www.codacy.com/app/rvanstone/xlr-addon-for-jira
+[xlr-addon-for-jira-code-climate-image]: https://codeclimate.com/github/xebialabs-community/xlr-addon-for-jira/badges/gpa.svg
+[xlr-addon-for-jira-code-climate-url]: https://codeclimate.com/github/xebialabs-community/xlr-addon-for-jira
+
+
 [![Build Status](https://travis-ci.org/xebialabs-community/xlr-addon-for-jira.svg?branch=master)](https://travis-ci.org/xebialabs-community/xlr-addon-for-jira)
 
 ## Preface ##
@@ -19,6 +34,7 @@ If you wish to extend the plugin, the following will be useful :
 * [Set up the Atlassian Plugin SDK and Build a Project](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project)
 * The sdk requires an Oracle ojdbc driver in the local maven repository. After downloading the [ojdbc6.jar](http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html) file, you can run the following maven command to install it `atlas-mvn install:install-file -Dfile=path/to/ojdbc6-11.2.0.2.0.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.2.0 -Dpackaging=jar`
 * To run the plugin in a development Jira instance, execute `atlas-run` from the checked out projects root directory.
+* Or if you wish to run the plugin from a docker container, checkout [xeor atlassian dev container](https://hub.docker.com/r/xeor/atlassian-dev/)
 
 ## Overview ##
 

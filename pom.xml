@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xebialabs.jira.addons</groupId>
     <artifactId>xlr-addon-for-jira</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <organization>
         <name>XebiaLabs</name>
         <url>http://www.xebialabs.com/</url>
@@ -118,10 +118,9 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
     <properties>
         <jira.version>6.3.6</jira.version>
-        <amps.version>5.1.11</amps.version>
+        <amps.version>5.1.18</amps.version>
         <jersey.client.version>1.5</jersey.client.version>
         <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
     </properties>

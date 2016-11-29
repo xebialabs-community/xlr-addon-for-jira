@@ -11,15 +11,19 @@ public class Release {
     private String id;
     private String title;
     private String status;
+    private ScriptUsername scriptUsername;
+    private String scriptUserPassword;
 
     private Map<String, String> variableValues;
 
     public Release() {
     }
 
-    public Release(final String id, final String title, final Map<String, String> variableValues) {
+    public Release(final String id, final String title, final ScriptUsername scriptUsername, final String scriptUserPassword, final Map<String, String> variableValues) {
         this.id = id;
         this.title = title;
+        this.scriptUsername = scriptUsername;
+        this.scriptUserPassword = scriptUserPassword;
         this.variableValues = variableValues;
     }
 
@@ -93,5 +97,21 @@ public class Release {
     @Override
     public int hashCode() {
         return title != null ? title.hashCode() : 0;
+    }
+
+    public ScriptUsername getScriptUsername() {
+        return scriptUsername;
+    }
+
+    public void setScriptUsername(ScriptUsername scriptUsername) {
+        this.scriptUsername = scriptUsername;
+    }
+
+    public String getScriptUserPassword() {
+        return scriptUserPassword;
+    }
+
+    public void setScriptUserPassword(String scriptUserPassword) {
+        this.scriptUserPassword = scriptUserPassword;
     }
 }

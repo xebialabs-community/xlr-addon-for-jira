@@ -13,6 +13,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.xebialabs.jira.xlr.dto.ScriptUsername;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -129,7 +130,7 @@ public class XLReleaseClient {
         return template;
     }
 
-    public Release createRelease(final String templateId, final String releaseTitle, final List<TemplateVariable> variables) throws XLReleaseClientException {
+    public Release createRelease(final String templateId, final String releaseTitle, final List<TemplateVariable> variables, final ScriptUsername scriptUsername, final String scriptUserPassword) throws XLReleaseClientException {
         WebResource service = newWebResource();
         GenericType<Release> genericType = new GenericType<Release>() {};
 
@@ -139,7 +140,7 @@ public class XLReleaseClient {
         Calendar dueDate = Calendar.getInstance();
         dueDate.add(Calendar.DATE, 1);
         String scheduledDueDate = format.format(dueDate.getTime());
-        CreateReleaseView createReleaseView = new CreateReleaseView(templateId, releaseTitle, variables, scheduledDueDate, scheduledStartDate);
+        CreateReleaseView createReleaseView = new CreateReleaseView(templateId, releaseTitle, variables, scheduledDueDate, scheduledStartDate, scriptUsername, scriptUserPassword);
 
         ClientResponse response = service.path("releases").type(MediaType.APPLICATION_JSON).post(ClientResponse.class, createReleaseView);
         if (response.getClientResponseStatus().getFamily() != SUCCESSFUL) {

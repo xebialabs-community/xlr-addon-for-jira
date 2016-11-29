@@ -89,7 +89,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
             title = "Release Jira Issue " + issue.getKey();
         }
 
-        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables);
+        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables, releaseTemplate.getScriptUsername(), releaseTemplate.getScriptUserPassword());
         issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPrivateId());
         writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPrivateId()));
         xlReleaseClient.startRelease(release.getPrivateId());
