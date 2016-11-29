@@ -14,9 +14,6 @@
 [xlr-addon-for-jira-code-climate-image]: https://codeclimate.com/github/xebialabs-community/xlr-addon-for-jira/badges/gpa.svg
 [xlr-addon-for-jira-code-climate-url]: https://codeclimate.com/github/xebialabs-community/xlr-addon-for-jira
 
-
-[![Build Status](https://travis-ci.org/xebialabs-community/xlr-addon-for-jira.svg?branch=master)](https://travis-ci.org/xebialabs-community/xlr-addon-for-jira)
-
 ## Preface ##
 
 This document describes the functionality provided by the XL Release addon for Jira.
