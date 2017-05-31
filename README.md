@@ -58,7 +58,7 @@ The XL Release addon for Jira is a Jira plugin with a primary focus of starting 
 
 The addon can be downloaded directly from the plugin's repository on [Github](https://github.com/xebialabs-community/xlr-addon-for-jira/releases).
 
-Please follow the instructions detailed in the _"Installing by file upload"_ section of Atlassian's [Universal Plugin Mananager](https://confluence.atlassian.com/display/UPM/Installing+add-ons) documentation.
+Please follow the instructions detailed in the _"Installing by file upload"_ section of Atlassian's [Universal Plugin Manager](https://confluence.atlassian.com/display/UPM/Installing+add-ons) documentation.
 
 ## _Start release from template_ Post Function ##
 
