@@ -1,7 +1,11 @@
 package com.xebialabs.jira.xlr.dto;
 
 import java.util.List;
+
+import com.xebialabs.jira.xlr.client.VariableSerializer;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateReleaseView {
@@ -27,6 +31,7 @@ public class CreateReleaseView {
         this.scriptUserPassword = scriptUserPassword;
     }
 
+    @JsonSerialize(contentUsing=VariableSerializer.class)
     public List<TemplateVariable> getVariables() {
         return variables;
     }
@@ -66,7 +71,6 @@ public class CreateReleaseView {
     public void setScheduledStartDate(String scheduledStartDate) {
         this.scheduledStartDate = scheduledStartDate;
     }
-
 
     public ScriptUsername getScriptUsername() {
         return scriptUsername;

@@ -22,16 +22,27 @@ As a prerequisite, the reader should have a good understanding of administering 
 
 * [Jira Administration Guide](https://confluence.atlassian.com/display/JIRA/JIRA+Administrator's+Guide)
 * Jira Administration Tutorial Videos
-	* [Jira Workflows](https://www.youtube.com/watch?v=XCXec_F0Z_8)
-	* [Setting up Fields and Screens](https://www.youtube.com/watch?v=SOIjfMxS6HE)
+    * [Jira Workflows](https://www.youtube.com/watch?v=XCXec_F0Z_8)
+    * [Setting up Fields and Screens](https://www.youtube.com/watch?v=SOIjfMxS6HE)
 
 If you wish to extend the plugin, the following will be useful :
 
 * [Atlassian's Getting Started](https://developer.atlassian.com/docs/getting-started) 
 * [Set up the Atlassian Plugin SDK and Build a Project](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project)
-* The sdk requires an Oracle ojdbc driver in the local maven repository. After downloading the [ojdbc6.jar](http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html) file, you can run the following maven command to install it `atlas-mvn install:install-file -Dfile=path/to/ojdbc6-11.2.0.2.0.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.2.0 -Dpackaging=jar`
-* To run the plugin in a development Jira instance, execute `atlas-run` from the checked out projects root directory.
-* Or if you wish to run the plugin from a docker container, checkout [xeor atlassian dev container](https://hub.docker.com/r/xeor/atlassian-dev/)
+
+The sdk requires an Oracle ojdbc driver in the local maven repository. After downloading the [ojdbc6.jar](http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html) file, you can run the following maven command to install it with:
+
+    atlas-mvn install:install-file -Dfile=path/to/ojdbc6-11.2.0.2.0.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.2.0 -Dpackaging=jar
+
+To build the plugin you'll need to install jta 1.0.1 jar in your local maven repository.  Download the jta.jar from [Oracle](http://download.oracle.com/otndocs/jcp/7287-jta-1.0.1a-class-oth-JSpec/?submit=Download).
+
+Unzip the file and install the jar with the following command:
+
+    mvn install:install-file -Dfile=<path>/jta.jar -DgroupId=jta -DartifactId=jta -Dversion=1.0.1 -Dpackaging=jar
+
+Also note that on Windows, the above may fail if running in PowerShell.  Run from cmd.exe instead.
+
+To run the plugin in a development Jira instance, execute `atlas-run` from the checked out projects root directory.  Or if you wish to run the plugin from a docker container, checkout [xeor atlassian dev container](https://hub.docker.com/r/xeor/atlassian-dev/)
 
 ## Overview ##
 
@@ -100,8 +111,38 @@ Any errors encountered are logged as comments on the issue.
 
 Unfortunately, Jira does not have a password custom field type. This plugin introduces such a type that hides the password on input and display.
 
+## Release Variables ##
 
-## Screenshots samples ##
+New XLR Releases can have variable values passed in from JIRA.  Define JIRA Custom Fields and XLR Variables with identical names.  When the release is started, the value of the variable in JIRA will be passed to XL Release.  
+
+### Mapping ###
+
+The table below shows the mapping of JIRA types to XL Release types:
+
+| JIRA Variable Type | XL Release Variable Type | Notes |
+| ------------------ | ------------------------ | ----- |
+| Checkbox (multiple values)    | List   | |
+| Date Picker (date)            | Date   | |
+| Date Time Picker (datetime)   | Date   | |
+| Labels                        | n/a    | Added as tags on the release. |
+| Number Field                  | Number | |
+| Radio Buttons                 | String | The selected item value |
+| Select List (cascading)       | List   | |
+| Select List (single choice)   | String | |
+| Select List (multiple choice) | List   | |
+| Text Field (multi-line)       | List or Map | One value per line. Use the form "k=v" for map. |
+| URL Field                     | String | |
+| User Picker (single user)     | String | |
+| ------------------ | ------------------------ | ----- |
+
+The above is the recommending mapping.  Since variable values are transformed as JIRA type -> json -> XLR type, some other mappings may work.  For example, JIRA numbers will likely map to String release valiables.  However, if your JIRA type and XLR type is incompatible, you'll get an exception when the release is created.
+
+### Exceptions ###
+
+* JIRA "labels" type are added to the release as tags.
+* XLR variable "issue" (String type) gets the JIRA issue ID.
+
+## Screenshots Samples ##
 
 The following screenshots are samples from a potential integration scenario.
 
