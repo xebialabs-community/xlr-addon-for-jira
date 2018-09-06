@@ -1,6 +1,7 @@
 package com.xebialabs.jira.xlr.dto;
 
 import java.util.List;
+import java.util.Set;
 
 import com.xebialabs.jira.xlr.client.VariableSerializer;
 
@@ -11,6 +12,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class CreateReleaseView {
 
     private List<TemplateVariable> variables;
+    private List<String> tags;
     private String templateId;
     private String title;
     private String dueDate;
@@ -21,8 +23,9 @@ public class CreateReleaseView {
     public CreateReleaseView() {
     }
 
-    public CreateReleaseView(final String templateId, final String title, final List<TemplateVariable> variables, final String dueDate, final String scheduledStartDate, final ScriptUsername scriptUsername, String scriptUserPassword) {
+    public CreateReleaseView(final String templateId, final String title, final List<TemplateVariable> variables, final List<String> tags, final String dueDate, final String scheduledStartDate, final ScriptUsername scriptUsername, String scriptUserPassword) {
         this.variables = variables;
+        this.tags = tags;
         this.templateId = templateId;
         this.title = title;
         this.dueDate = dueDate;
@@ -38,6 +41,13 @@ public class CreateReleaseView {
 
     public void setVariables(final List<TemplateVariable> variables) {
         this.variables = variables;
+    }
+
+    public List<String> getTags() {
+        return this.tags;
+    }
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public String getTemplateId() {

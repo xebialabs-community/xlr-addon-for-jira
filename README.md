@@ -115,7 +115,7 @@ Unfortunately, Jira does not have a password custom field type. This plugin intr
 
 New XLR Releases can have variable values passed in from JIRA.  Define JIRA Custom Fields and XLR Variables with identical names.  When the release is started, the value of the variable in JIRA will be passed to XL Release.  
 
-### Mapping ###
+### Custom Field Mapping ###
 
 The table below shows the mapping of JIRA types to XL Release types:
 
@@ -124,7 +124,6 @@ The table below shows the mapping of JIRA types to XL Release types:
 | Checkbox (multiple values)    | List   | |
 | Date Picker (date)            | Date   | |
 | Date Time Picker (datetime)   | Date   | |
-| Labels                        | n/a    | Added as tags on the release. |
 | Number Field                  | Number | |
 | Radio Buttons                 | String | The selected item value |
 | Select List (cascading)       | List   | |
@@ -133,13 +132,12 @@ The table below shows the mapping of JIRA types to XL Release types:
 | Text Field (multi-line)       | List or Map | One value per line. Use the form "k=v" for map. |
 | URL Field                     | String | |
 | User Picker (single user)     | String | |
-| ------------------ | ------------------------ | ----- |
 
 The above is the recommending mapping.  Since variable values are transformed as JIRA type -> json -> XLR type, some other mappings may work.  For example, JIRA numbers will likely map to String release valiables.  However, if your JIRA type and XLR type is incompatible, you'll get an exception when the release is created.
 
-### Exceptions ###
+### Other Mappings ###
 
-* JIRA "labels" type are added to the release as tags.
+* JIRA issue labels are added to the release as tags.
 * XLR variable "issue" (String type) gets the JIRA issue ID.
 
 ## Screenshots Samples ##

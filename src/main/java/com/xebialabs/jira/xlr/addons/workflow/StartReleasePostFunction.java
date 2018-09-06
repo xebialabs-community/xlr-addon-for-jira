@@ -1,31 +1,9 @@
 package com.xebialabs.jira.xlr.addons.workflow;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.CustomFieldManager;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.comments.CommentManager;
-import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
-import com.google.common.base.Strings;
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.workflow.WorkflowException;
-
-import com.xebialabs.jira.xlr.client.TemplateNotFoundException;
-import com.xebialabs.jira.xlr.client.XLReleaseClient;
-import com.xebialabs.jira.xlr.client.XLReleaseClientException;
-import com.xebialabs.jira.xlr.dto.Release;
-import com.xebialabs.jira.xlr.dto.TemplateVariable;
-
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_GLOBAL;
-import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_TITLE_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_ID_FIELD;
+import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_TITLE_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_TEMPLATE_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_URL_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_URL_GLOBAL;
@@ -33,12 +11,44 @@ import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_USERNAME
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_USER_NAME_FIELD;
 import static java.lang.String.format;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.comments.CommentManager;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.label.Label;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
+import com.google.common.base.Strings;
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.workflow.WorkflowException;
+import com.xebialabs.jira.xlr.client.TemplateNotFoundException;
+import com.xebialabs.jira.xlr.client.XLReleaseClient;
+import com.xebialabs.jira.xlr.client.XLReleaseClientException;
+import com.xebialabs.jira.xlr.dto.Release;
+import com.xebialabs.jira.xlr.dto.TemplateVariable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This is the post-function class that gets executed at the end of the transition.
  * Any parameters that were saved in your factory class will be available in the transientVars Map.
  */
 public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 {
+
+    private static final Logger log = LoggerFactory.getLogger(StartReleasePostFunction.class);
+
     public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException 
     {
         MutableIssue issue = getIssue(transientVars);
@@ -75,7 +85,6 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
     {
         IssueFieldMapper argsMapper = new IssueFieldMapper(args, issue);
         XLReleaseClient xlReleaseClient = initClient(argsMapper);
-        String serverVersion = xlReleaseClient.getServerVersion();
 
         String releaseId = argsMapper.getReleaseId();
         if ( releaseId != null ) 
@@ -86,9 +95,9 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 
         String xlrTemplate = argsMapper.getReleaseTemplateName();
         Release releaseTemplate = xlReleaseClient.findTemplateByTitle(xlrTemplate);
-        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
+        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId());
 
-        argsMapper.populateVariables(variables, serverVersion);
+        argsMapper.populateVariables(variables);
 
         String title = argsMapper.getOptionalCustomFieldValue(XLR_RELEASE_TITLE_FIELD);
         if (Strings.isNullOrEmpty(title)) 
@@ -96,7 +105,14 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
             title = "Release Jira Issue " + issue.getKey();
         }
 
-        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables, releaseTemplate.getScriptUsername(), releaseTemplate.getScriptUserPassword());
+        Set<Label> labels = issue.getLabels();
+        List<String> xlabels = new ArrayList<String>();
+        for ( Label label : labels )
+        {
+            xlabels.add(label.getLabel());
+        }
+
+        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables, xlabels, releaseTemplate.getScriptUsername(), releaseTemplate.getScriptUserPassword());
 
         issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPrivateId());
         writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPrivateId()));
@@ -147,28 +163,19 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
             return resolveValueFromCustomIssueFieldOrGlobalSetting(XLR_USER_NAME_FIELD, XLR_USERNAME_GLOBAL, "Username");
         }
 
-        public void populateVariables(List<TemplateVariable> variables, String serverVersion) 
+        public void populateVariables(List<TemplateVariable> variables) 
         {
             for (TemplateVariable variable : variables) 
             {
-                String key = null;
-
-                if ( serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) 
-                {
-                    key = variable.getKey().substring(2, variable.getKey().length() - 1);
-                } 
-                else 
-                {
-                    key = variable.getKey();
-                }
+                String key = variable.getKey();
 
                 if ( key.equals("issue") ) 
                 {
-                    variable.setValue(issue.getKey());
+                    variable.setValue(this.issue.getKey());
                 } 
                 else if ( issueCustomFields.containsKey(key) ) 
                 {
-                    Object value = issue.getCustomFieldValue(issueCustomFields.get(key));
+                    Object value = this.issue.getCustomFieldValue(issueCustomFields.get(key));
                     variable.setValue(value);
                 }
             }

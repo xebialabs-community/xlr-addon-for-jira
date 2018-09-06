@@ -1,0 +1,83 @@
+[
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variable8685e9f5bf8b4e169e822fdc60ab776c",
+    "type": "xlrelease.MapStringStringVariable",
+    "key": "environments",
+    "requiresValue": false,
+    "showOnReleaseStart": true,
+    "label": "Environments",
+    "value": {
+      "dev": "vm01"
+    }
+  },
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variable57ae07aca7074aad99a57ddb9c705f94",
+    "type": "xlrelease.SetStringVariable",
+    "key": "artifacts",
+    "requiresValue": true,
+    "showOnReleaseStart": true,
+    "label": "Artifacts",
+    "value": [
+      "srvOak1.war",
+      "srvOak2.war"
+    ]
+  },
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variableff76120786cb4f52bc2f3c53a5729912",
+    "type": "xlrelease.BooleanVariable",
+    "key": "undeploy",
+    "requiresValue": true,
+    "showOnReleaseStart": true,
+    "label": "Undeploy",
+    "value": true
+  },
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variable8cc06699bd0849029a502ab09150774a",
+    "type": "xlrelease.IntegerVariable",
+    "key": "timeout",
+    "requiresValue": true,
+    "showOnReleaseStart": true,
+    "label": "Timeout",
+    "value": 60
+  },
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variablec457df1f596640c1a789b3f043b2258d",
+    "type": "xlrelease.StringVariable",
+    "key": "someListBox",
+    "requiresValue": true,
+    "showOnReleaseStart": true,
+    "label": "Some List Box",
+    "valueProvider": {
+      "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variablec457df1f596640c1a789b3f043b2258d/valueProvider",
+      "type": "xlrelease.ListOfStringValueProviderConfiguration",
+      "variable": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variablec457df1f596640c1a789b3f043b2258d",
+      "values": [
+        "Item 1",
+        "Item 2"
+      ],
+      "variableMapping": {}
+    },
+    "value": "Item 1"
+  },
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variable428f2ba6ad164bdf9065992cf936f124",
+    "type": "xlrelease.ListStringVariable",
+    "key": "someList2",
+    "requiresValue": true,
+    "showOnReleaseStart": true,
+    "label": "Some List",
+    "value": [
+      "Item 1",
+      "Item 2"
+    ]
+  },
+  {
+    "id": "Applications/Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d/Variabled8a73a645aa44754814f1b312a3d62bd",
+    "type": "xlrelease.DateVariable",
+    "key": "someDate",
+    "requiresValue": true,
+    "showOnReleaseStart": true,
+    "label": "Some Date",
+    "value": "2018-08-31T11:30:00-04:00"
+  }
+]

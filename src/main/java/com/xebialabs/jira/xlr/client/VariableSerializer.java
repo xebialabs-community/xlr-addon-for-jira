@@ -1,6 +1,11 @@
 package com.xebialabs.jira.xlr.client;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import com.atlassian.jira.issue.customfields.option.Option;
@@ -10,12 +15,16 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Map JIRA custom field types to XL Release variable types.
  */
 public class VariableSerializer extends JsonSerializer<TemplateVariable>
 {
+    private static final Logger log = LoggerFactory.getLogger(VariableSerializer.class);
+
     @Override
     public void serialize(TemplateVariable var, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException 
     {
@@ -107,9 +116,28 @@ public class VariableSerializer extends JsonSerializer<TemplateVariable>
             }
             jgen.writeEndArray();
         }
+        else if ( "xlrelease.DateVariable".equals(var.getType()) )
+        {
+            // JIRA passes as Timestamp.  Convert to ISO
+            if ( var.getValue() instanceof Timestamp )
+            {
+                Timestamp ts = (Timestamp) var.getValue();
+                ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts.getTime()), ZoneId.systemDefault());
+                String tsiso = zdt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+                log.debug(String.format("[XLR] writing date variable '%s' as '%s'", var.getKey(), tsiso));
+                jgen.writeObjectField("value", tsiso);
+            }
+            else
+            {
+                // write as is
+                log.debug(String.format("[XLR] writing date variable '%s' as is", var.getKey()));
+                jgen.writeObjectField("value", var.getValue());
+            }
+        }
         // otherwise we'll just let jackson do it's own conversion
         else
         {
+            log.debug(String.format("[XLR] writing unconverted type '%s' for variable '%s'", var.getType(), var.getKey()));
             jgen.writeObjectField("value", var.getValue());
         }
 
