@@ -63,14 +63,8 @@ public class Release {
         return (id != null) ? id.replace("Applications/", "") : null;
     }
 
-    public String getPublicId(String serverVersion) {
-
-        if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
-            return (id != null) ? id.replace("Applications/", "") : null;
-        } else {
-            return id;
-        }
-
+    public String getPublicId() {
+        return (id != null) ? id.replace("Applications/", "") : null;
     }
 
     @Override

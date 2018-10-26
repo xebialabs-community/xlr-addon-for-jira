@@ -1,0 +1,52 @@
+{
+  "variables": [
+    {
+      "key": "environments",
+      "value": {
+        "key1": "value1",
+        "key2": "value2",
+        "key3": "value3"
+      }
+    },
+    {
+      "key": "artifacts",
+      "value": [
+        "artifact1",
+        "artifact2"
+      ]
+    },
+    {
+      "key": "undeploy",
+      "value": true
+    },
+    {
+      "key": "timeout",
+      "value": 45
+    },
+    {
+      "key": "someListBox",
+      "value": "Item 1"
+    },
+    {
+      "key": "someList2",
+      "value": [
+        "item2",
+        "item3"
+      ]
+    },
+    {
+      "key": "someDate",
+      "value": 1536090540000
+    }
+  ],
+  "tags": [
+    "label1",
+    "label2"
+  ],
+  "templateId": "Folder4189686005e4b78ad2ff9329fe91257/Release1784607c31994b40bbdd114fa4a8f87d",
+  "title": "Release Jira Issue PFJ-1",
+  "dueDate": "2018-09-07",
+  "scheduledStartDate": "2018-09-06",
+  "scriptUsername": null,
+  "scriptUserPassword": null
+}

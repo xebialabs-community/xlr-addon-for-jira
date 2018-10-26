@@ -1,31 +1,9 @@
 package com.xebialabs.jira.xlr.addons.workflow;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.CustomFieldManager;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.comments.CommentManager;
-import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
-import com.google.common.base.Strings;
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.workflow.WorkflowException;
-
-import com.xebialabs.jira.xlr.client.TemplateNotFoundException;
-import com.xebialabs.jira.xlr.client.XLReleaseClient;
-import com.xebialabs.jira.xlr.client.XLReleaseClientException;
-import com.xebialabs.jira.xlr.dto.Release;
-import com.xebialabs.jira.xlr.dto.TemplateVariable;
-
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_PASSWORD_GLOBAL;
-import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_TITLE_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_ID_FIELD;
+import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_RELEASE_TITLE_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_TEMPLATE_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_URL_FIELD;
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_URL_GLOBAL;
@@ -33,13 +11,46 @@ import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_USERNAME
 import static com.xebialabs.jira.xlr.addons.workflow.FieldConstants.XLR_USER_NAME_FIELD;
 import static java.lang.String.format;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.comments.CommentManager;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.label.Label;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
+import com.google.common.base.Strings;
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.workflow.WorkflowException;
+import com.xebialabs.jira.xlr.client.TemplateNotFoundException;
+import com.xebialabs.jira.xlr.client.XLReleaseClient;
+import com.xebialabs.jira.xlr.client.XLReleaseClientException;
+import com.xebialabs.jira.xlr.dto.Release;
+import com.xebialabs.jira.xlr.dto.TemplateVariable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This is the post-function class that gets executed at the end of the transition.
  * Any parameters that were saved in your factory class will be available in the transientVars Map.
  */
 public class StartReleasePostFunction extends AbstractJiraFunctionProvider
 {
-    public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
+
+    private static final Logger log = LoggerFactory.getLogger(StartReleasePostFunction.class);
+
+    public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException 
+    {
         MutableIssue issue = getIssue(transientVars);
 
         try {
@@ -58,63 +69,78 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         }
     }
 
-    private void writeErrorAsComment(Issue issue, String msg) {
+    private void writeErrorAsComment(Issue issue, String msg) 
+    {
         writeComment(issue, "{color:red}\n" + msg + "\n{color}");
     }
 
-    private void writeComment(Issue issue, String msg) {
+    private void writeComment(Issue issue, String msg) 
+    {
         CommentManager commentManager = ComponentAccessor.getCommentManager();
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getUser();
         commentManager.create(issue, user, msg, false);
     }
 
-    private void doExecute(Map args, MutableIssue issue) throws XLReleaseClientException {
+    private void doExecute(Map args, MutableIssue issue) throws XLReleaseClientException 
+    {
         IssueFieldMapper argsMapper = new IssueFieldMapper(args, issue);
         XLReleaseClient xlReleaseClient = initClient(argsMapper);
-        String serverVersion = xlReleaseClient.getServerVersion();
 
         String releaseId = argsMapper.getReleaseId();
-        if (releaseId != null) {
+        if ( releaseId != null ) 
+        {
             writeComment(issue, "Release already created with id " + releaseId + ". Will ignore transition.");
             return;
         }
 
         String xlrTemplate = argsMapper.getReleaseTemplateName();
         Release releaseTemplate = xlReleaseClient.findTemplateByTitle(xlrTemplate);
-        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId(serverVersion));
-        argsMapper.populateVariables(variables, serverVersion);
+        List<TemplateVariable> variables = xlReleaseClient.getVariables(releaseTemplate.getPublicId());
+
+        argsMapper.populateVariables(variables);
 
         String title = argsMapper.getOptionalCustomFieldValue(XLR_RELEASE_TITLE_FIELD);
-        if (Strings.isNullOrEmpty(title)) {
+        if (Strings.isNullOrEmpty(title)) 
+        {
             title = "Release Jira Issue " + issue.getKey();
         }
 
-        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables, releaseTemplate.getScriptUsername(), releaseTemplate.getScriptUserPassword());
+        Set<Label> labels = issue.getLabels();
+        List<String> xlabels = new ArrayList<String>();
+        for ( Label label : labels )
+        {
+            xlabels.add(label.getLabel());
+        }
+
+        Release release = xlReleaseClient.createRelease(releaseTemplate.getPrivateId(), title, variables, xlabels, releaseTemplate.getScriptUsername(), releaseTemplate.getScriptUserPassword());
+
         issue.setCustomFieldValue(argsMapper.getReleaseIdField(), release.getPrivateId());
         writeComment(issue, format("[%s|%s#/releases/%s] created.", title, argsMapper.getUrl(), release.getPrivateId()));
-        xlReleaseClient.startRelease(release.getPrivateId());
 
+        xlReleaseClient.startRelease(release.getPrivateId());
     }
 
-    private XLReleaseClient initClient(IssueFieldMapper argsMapper) {
+    private XLReleaseClient initClient(IssueFieldMapper argsMapper) 
+    {
         return new XLReleaseClient(argsMapper.getUrl(), argsMapper.getUsername(), argsMapper.getPassword());
     }
 
 
-    private static class IssueFieldMapper {
-
+    private static class IssueFieldMapper 
+    {
         private final Map settings;
         private Issue issue;
         Map<String, CustomField> issueCustomFields;
 
-        IssueFieldMapper(Map settings, Issue issue) {
+        IssueFieldMapper(Map settings, Issue issue) 
+        {
             this.settings = settings;
             this.issue = issue;
             this.issueCustomFields = getCustomFieldsForIssueIndexedByFieldName(issue);
         }
 
         public String getReleaseTemplateName() {
-            return getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD);
+            return (String) getCustomRequiredFieldValue(XLR_TEMPLATE_FIELD);
         }
 
         public CustomField getReleaseIdField() {
@@ -122,7 +148,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
         }
 
         public String getReleaseId() {
-            return getCustomFieldValue(XLR_RELEASE_ID_FIELD);
+            return (String) getCustomFieldValue(XLR_RELEASE_ID_FIELD);
         }
 
         public String getUrl() {
@@ -137,85 +163,100 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
             return resolveValueFromCustomIssueFieldOrGlobalSetting(XLR_USER_NAME_FIELD, XLR_USERNAME_GLOBAL, "Username");
         }
 
-        public void populateVariables(List<TemplateVariable> variables, String serverVersion) {
+        public void populateVariables(List<TemplateVariable> variables) 
+        {
+            for (TemplateVariable variable : variables) 
+            {
+                String key = variable.getKey();
 
-            for (TemplateVariable variable : variables) {
-                String key;
-
-                if (serverVersion.substring(0,3).equals("4.6") || serverVersion.substring(0,3).equals("4.7") ) {
-                    key = variable.getKey().substring(2, variable.getKey().length() - 1);
-                } else {
-                    key = variable.getKey();
-                }
-
-                if (key.equals("issue")) {
-                    variable.setValue(issue.getKey());
-                } else if (issueCustomFields.containsKey(key)) {
-                    variable.setValue((String) issue.getCustomFieldValue(issueCustomFields.get(key)));
+                if ( key.equals("issue") ) 
+                {
+                    variable.setValue(this.issue.getKey());
+                } 
+                else if ( issueCustomFields.containsKey(key) ) 
+                {
+                    Object value = this.issue.getCustomFieldValue(issueCustomFields.get(key));
+                    variable.setValue(value);
                 }
             }
         }
 
-        private String resolveValueFromCustomIssueFieldOrGlobalSetting(String settingsField, String globalSettingsField, String settingName) {
+        private String resolveValueFromCustomIssueFieldOrGlobalSetting(String settingsField, String globalSettingsField, String settingName) 
+        {
             String value = getOptionalCustomFieldValue(settingsField);
-            if (Strings.isNullOrEmpty(value)) {
+            if ( Strings.isNullOrEmpty(value) ) 
+            {
                 value = (String) settings.get(globalSettingsField);
-                if (Strings.isNullOrEmpty(value)) {
+                if ( Strings.isNullOrEmpty(value) ) 
+                {
                     throw new IllegalArgumentException(format("%s is not defined on issue nor is it defined in post function arguments as a global setting.", settingName));
                 }
             }
             return value;
         }
 
-        private String getCustomRequiredFieldValue(String name) {
-            String value = getCustomFieldValue(name);
-            if (Strings.isNullOrEmpty(value)) {
+        private Object getCustomRequiredFieldValue(String name) 
+        {
+            Object value = getCustomFieldValue(name);
+            if ( value == null ) 
+            {
                 String issueFieldName = resolveIssueFieldNameFromSettingsFieldName(name);
                 throw new IllegalArgumentException(format("Custom field '%s', referenced from post function argument %s, has empty value on issue %s.", issueFieldName, name, issue.getId()));
             }
             return value;
         }
 
-        private String getOptionalCustomFieldValue(String name) {
+        private String getOptionalCustomFieldValue(String name) 
+        {
             CustomField issueField = getOptionalCustomField(name);
-            if (issueField == null) {
+            if (issueField == null) 
+            {
                 return null;
             }
             return (String)issue.getCustomFieldValue(issueField);
         }
 
-        private String getCustomFieldValue(String name) {
+        // For a JIRA Custom Field 'name', return its value
+        private Object getCustomFieldValue(String name) 
+        {
             CustomField issueField = getCustomField(name);
-            return (String)issue.getCustomFieldValue(issueField);
+            return issue.getCustomFieldValue(issueField);
         }
 
-        private CustomField getCustomField(final String name) {
+        private CustomField getCustomField(final String name) 
+        {
             CustomField issueField = getOptionalCustomField(name);
-            if (issueField == null) {
+            if ( issueField == null ) 
+            {
                 String issueFieldName = resolveIssueFieldNameFromSettingsFieldName(name);
                 throw new IllegalArgumentException(format("Custom field '%s', referenced from post function argument %s, is not defined on issue.", issueFieldName, name));
             }
             return issueField;
         }
 
-        private CustomField getOptionalCustomField(final String name) {
+        private CustomField getOptionalCustomField(final String name) 
+        {
             String issueFieldName = resolveIssueFieldNameFromSettingsFieldName(name);
             return issueCustomFields.get(issueFieldName);
         }
 
-        private String resolveIssueFieldNameFromSettingsFieldName(String settingsFieldName) {
+        private String resolveIssueFieldNameFromSettingsFieldName(String settingsFieldName) 
+        {
             String fieldName = (String) settings.get(settingsFieldName);
-            if (Strings.isNullOrEmpty(fieldName)) {
+            if ( Strings.isNullOrEmpty(fieldName) ) 
+            {
                 throw new IllegalArgumentException(format("Argument '%s' is not defined.", settingsFieldName));
             }
             return fieldName;
         }
 
-        private Map<String, CustomField> getCustomFieldsForIssueIndexedByFieldName(Issue issue) {
+        private Map<String, CustomField> getCustomFieldsForIssueIndexedByFieldName(Issue issue) 
+        {
             CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
             List<CustomField> customFieldObjects = customFieldManager.getCustomFieldObjects(issue);
             Map<String, CustomField> index = new HashMap<String, CustomField>(customFieldObjects.size());
-            for (CustomField customFieldObject : customFieldObjects) {
+            for (CustomField customFieldObject : customFieldObjects) 
+            {
                 index.put(customFieldObject.getFieldName(), customFieldObject);
             }
             return index;
