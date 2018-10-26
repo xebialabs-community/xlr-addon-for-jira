@@ -13,6 +13,7 @@ deploy:
     secure: IKTvbodiL4lOKYApb4D3dyZfp601shCKt4M7vDZVUZ4/74NLl25FQjPReecQgElopQcfKqKToko2B16wq+8YLh5jqZkqaxN4dKv+ZzO1k9r6XOCkIP7FQ0qgtmaKKYvPEepyAt6rNz0M1TyGIsvtoeSyabnHKcAERiKLzybfU450lMrUrmzJpF/R9kFmKcjvllZtHL3uhzptWlQ5EuLQ2jof1UE285X4mbc/S0Ys9U9KVs26l+j1hk+kxJHacT89fsR9S9NnnJ3JKNwbHQ4pwAw+ECmpc4yR5n/tCFkYkcw5qgNqsU1zNvQvpjxe6vPIpEp5D10wuMd8FaVtFExRafiGCfOcoKN/fx+B5svpUl7UfD2X+3tXvil3vzbmJ53KfYPf4gvxdEHMR3mU8HQZt0gS5unv89xPEnWfwVPtFnkiGmEdtavIiPaDqHefGHI+eboWmZRnxHCWWID7/gGdn6WN3CqdCjm1S+Q/o7WS37iP1pPoHCPilqsCmvPbEWd4zsws8BYTv6hfQipFUhaRcmvdv+LWAju9X/5zB72H8B5Kl8ODmnERmyfM4UZ2AmrYtXEaF1r/a28zBXAlgvojPx60+Gl82FtiEByQY5ybONQ0bBTqsxt61Rq6GXpl4ZwGX7DTlY6MoSjOHXBPUvHtQqzAVB9FY4LxplYVVQ9Eg6s=
   file_glob: true
   file: target/*.jar
+  skip_cleanup: true
   on:
     repo: xebialabs-community/xlr-addon-for-jira
     all_branches: true
