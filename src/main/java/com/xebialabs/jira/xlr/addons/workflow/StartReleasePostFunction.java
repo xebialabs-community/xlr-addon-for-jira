@@ -78,7 +78,7 @@ public class StartReleasePostFunction extends AbstractJiraFunctionProvider
     {
         CommentManager commentManager = ComponentAccessor.getCommentManager();
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getUser();
-        commentManager.create(issue, user, msg, false);
+        // commentManager.create(issue, user, msg, false);
     }
 
     private void doExecute(Map args, MutableIssue issue) throws XLReleaseClientException 
